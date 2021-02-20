@@ -13,19 +13,19 @@ class EmiCalculator extends HookWidget {
     var _opt = useState(Options.loanAmount);
 
     TextEditingController _loanAmountFieldController = TextEditingController();
-    _loanAmountFieldController.addListener(() { print('loan -> ' +_loanAmountFieldController.text);});
+    // _loanAmountFieldController.addListener(() { print('loan -> ' +_loanAmountFieldController.text);});
 
     TextEditingController _interestFieldController = TextEditingController();
-    _interestFieldController.addListener(() { print(_interestFieldController.text);});
+    // _interestFieldController.addListener(() { print(_interestFieldController.text);});
 
     TextEditingController _yearsFieldController = TextEditingController();
-    _yearsFieldController.addListener(() { print(_yearsFieldController.text);});
+    // _yearsFieldController.addListener(() { print(_yearsFieldController.text);});
 
     TextEditingController _monthsFieldController = TextEditingController();
-    _monthsFieldController.addListener(() { print(_monthsFieldController.text);});
+    // _monthsFieldController.addListener(() { print(_monthsFieldController.text);});
 
     TextEditingController _emiFieldController = TextEditingController();
-    _emiFieldController.addListener(() { print(_emiFieldController.text);});
+    // _emiFieldController.addListener(() { print(_emiFieldController.text);});
 
     FocusNode _loanFieldFocusNode = FocusNode();
 
@@ -46,6 +46,25 @@ class EmiCalculator extends HookWidget {
         _interestFieldController.dispose();
       };
     }, []);
+
+    print(_loanAmountFieldController.text);
+
+    useEffect(() {
+      if(_loanAmountFieldController.text != '' &&
+      _interestFieldController.text != '' &&
+      _yearsFieldController.text != '' &&
+      _monthsFieldController.text != '' &&
+      _emiFieldController.text != '') {
+        print('disable to enable');
+      }
+      print('jhjv');
+
+    } , [ _loanAmountFieldController.value,
+    _interestFieldController.value,
+    _yearsFieldController.value,
+    _monthsFieldController.value,
+    _emiFieldController.value]);
+
     // ignore: missing_return
     useEffect(() {
       print(_opt.value);
@@ -88,7 +107,7 @@ class EmiCalculator extends HookWidget {
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       width: MediaQuery.of(context).size.width * 0.3,
                       child: TextField(
-                        focusNode: _loanFieldFocusNode,
+                        // focusNode: _loanFieldFocusNode,
                         controller: _loanAmountFieldController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
