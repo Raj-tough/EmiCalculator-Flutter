@@ -1,59 +1,77 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter/services.dart';
+
+class EmiCalculator1 extends StatefulWidget {
+  @override
+  _EmiCalculator1State createState() => _EmiCalculator1State();
+}
 
 enum Options { loanAmount, interest, period, emi }
 
-class EmiCalculator extends HookWidget {
+class _EmiCalculator1State extends State<EmiCalculator1> {
 
-  // Options _opt = Options.loanAmount;
+  var _opt = Options.loanAmount;
+
+  bool _disabled = true;
+
+  TextEditingController _loanAmountFieldController = TextEditingController();
+  TextEditingController _interestFieldController = TextEditingController();
+  TextEditingController _yearsFieldController = TextEditingController();
+  TextEditingController _monthsFieldController = TextEditingController();
+  TextEditingController _emiFieldController = TextEditingController();
+
+
+  FocusNode _loanFieldFocusNode = FocusNode();
+
+  _resetForm () {
+    _loanAmountFieldController.text = '';
+    _interestFieldController.text = '';
+    _yearsFieldController.text= '';
+    _monthsFieldController.text = '';
+    _emiFieldController.text = '';
+    // FocusScope.of(context).requestFocus(_loanFieldFocusNode);
+    setState(() {
+      _opt = Options.loanAmount;
+    });
+  }
+  
+  _checkInputs () {
+    if(_loanAmountFieldController.text != '' && _interestFieldController.text != '' && _yearsFieldController.text != '' && _monthsFieldController.text != '' && _emiFieldController.text != '') {
+      setState(() {
+        _disabled = false;
+      });
+    } else {
+      setState(() {
+        _disabled = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loanAmountFieldController.addListener(_checkInputs);
+    _interestFieldController.addListener(_checkInputs);
+    _yearsFieldController.addListener(_checkInputs);
+    _monthsFieldController.addListener(_checkInputs);
+    _emiFieldController.addListener(_checkInputs);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
+    _loanAmountFieldController.dispose();
+    _interestFieldController.dispose();
+    _yearsFieldController.dispose();
+    _monthsFieldController.dispose();
+    _emiFieldController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    var _opt = useState(Options.loanAmount);
-
-    TextEditingController _loanAmountFieldController = TextEditingController();
-    TextEditingController _interestFieldController = TextEditingController();
-    TextEditingController _yearsFieldController = TextEditingController();
-    TextEditingController _monthsFieldController = TextEditingController();
-    TextEditingController _emiFieldController = TextEditingController();
-
-    FocusNode _loanFieldFocusNode = FocusNode();
-
-    _resetForm () {
-      _loanAmountFieldController.text = '';
-      _interestFieldController.text = '';
-      _yearsFieldController.text= '';
-      _monthsFieldController.text = '';
-      _emiFieldController.text = '';
-      // FocusScope.of(context).requestFocus(_loanFieldFocusNode);
-
-    }
-
-    var _string = useState('');
-
-    final _disabled = useState(true);
-    
-    useEffect(() {
-      print('useEffect running');
-      return () {
-        _loanAmountFieldController.dispose();
-        _interestFieldController.dispose();
-      };
-    }, const []);
-
-    useEffect(() {
-      print('this is current string -->  ' + _string.value);
-    },  [_string.value]);
-
-    print('this is actual -----> '+ _loanAmountFieldController.text);
-
-
-    // ignore: missing_return
-    useEffect(() {
-      print(_opt.value);
-    }, [_opt.value]);
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -77,9 +95,11 @@ class EmiCalculator extends HookWidget {
                       children: [
                         Radio(
                           value: Options.loanAmount,
-                          groupValue: _opt.value,
+                          groupValue: _opt,
                           onChanged: (value) {
-                            _opt.value = value;
+                            setState(() {
+                              _opt = value;
+                            });
                           },
                         ),
                         Text('Loan Amount'),
@@ -93,12 +113,13 @@ class EmiCalculator extends HookWidget {
                       child: TextField(
                         // focusNode: _loanFieldFocusNode,
                         controller: _loanAmountFieldController,
-                        // onChanged: (text) {
-                        //   print('text --> ' + text);
-                        //   _string.value = text;
-                        // },
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(10),
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                        ],
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
+                          errorText: !true ? 'asasd' : '',
                           labelText: 'Enter Loan Amount',
                         ),
                       ),
@@ -116,9 +137,11 @@ class EmiCalculator extends HookWidget {
                       children: [
                         Radio(
                           value: Options.interest,
-                          groupValue: _opt.value,
+                          groupValue: _opt,
                           onChanged: ( value) {
-                            _opt.value = value;
+                            setState(() {
+                              _opt = value;
+                            });
                           },
                         ),
                         Text('Interest %'),
@@ -150,9 +173,11 @@ class EmiCalculator extends HookWidget {
                       children: [
                         Radio(
                           value: Options.period,
-                          groupValue: _opt.value,
+                          groupValue: _opt,
                           onChanged: ( value) {
-                            _opt.value = value;
+                            setState(() {
+                              _opt = value;
+                            });
                           },
                         ),
                         Text('Period'),
@@ -198,9 +223,11 @@ class EmiCalculator extends HookWidget {
                       children: [
                         Radio(
                           value: Options.emi,
-                          groupValue: _opt.value,
+                          groupValue: _opt,
                           onChanged: ( value) {
-                            _opt.value = value;
+                            setState(() {
+                              _opt = value;
+                            });
                           },
                         ),
                         Text('EMI'),
@@ -228,10 +255,10 @@ class EmiCalculator extends HookWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     RaisedButton(
-                      onPressed: _disabled.value ? null : () {},
+                      onPressed: _disabled ? null : () {},
                       disabledElevation: 3,
-                      disabledColor: Colors.grey[400],
-                      child: Text('Calculate', style: TextStyle(color: Colors.grey[600]),),
+                      disabledColor: Colors.grey[300],
+                      child: Text('Calculate', style: TextStyle(color: _disabled ?  Colors.grey[600] : Colors.white),),
                       color: Colors.deepPurple,
                       textColor: Colors.white,
                     ),
@@ -267,4 +294,3 @@ class EmiCalculator extends HookWidget {
     );
   }
 }
-

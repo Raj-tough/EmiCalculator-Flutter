@@ -1,5 +1,7 @@
+import 'package:emi_calculator/Screens/try.dart';
 import 'package:flutter/material.dart';
 import './Screens/emi_calculator.dart';
+import './Screens/try.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: EmiCalculator(),
+      home: EmiCalculator1(),
     );
   }
 }
